@@ -33,6 +33,28 @@ void led_init(unsigned int led)
  */
 void blink(unsigned int led)
 {
+	SET_BIT(RCC_BASE + RCC_AHB1ENR_OFFSET, GPIO_EN_BIT(0));
+
+        //MODER led pin = 01 => General purpose output mode
+        CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_1_BIT(0));
+        CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_0_BIT(0));
+
+        //OT led pin = 0 => Output push-pull
+        //CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OTYPER_OFFSET, OTy_BIT(0));
+
+        //OSPEEDR led pin = 00 => Low speed
+        //CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OSPEEDR_OFFSET, OSPEEDRy_1_BIT(0));
+        //CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OSPEEDR_OFFSET, OSPEEDRy_0_BIT(0));
+
+        //PUPDR led pin = 00 => No pull-up, pull-down
+        SET_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_1_BIT(0));
+        CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_0_BIT(0));
+
+
+	while(1){
+		if(READ_BIT(GPIO_BASE(GPIO_PORTA)+GPIOx_IDR_OFFSET,0))break;
+	}
+	
 	led_init(led);
 
 	unsigned int i;
